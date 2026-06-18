@@ -1,0 +1,42 @@
+elasticsearch:
+  enabled: true
+  replicas: 1
+  minimumMasterNodes: 1
+  antiAffinity: "soft"
+  esJavaOpts: "-Xmx1g -Xms1g"
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+opensearch:
+  enabled: false            # <- the missing override; current chart default is true
+
+kafka:
+  enabled: true
+  controller:
+    replicaCount: 1
+    resources:
+      requests: { memory: "512Mi", cpu: "250m" }
+      limits:   { memory: "1Gi",   cpu: "500m" }
+  broker:
+    replicaCount: 0
+
+
+
+
+zookeeper:
+  enabled: false             # current chart default; KRaft mode doesn't need it
+
+neo4j:
+  enabled: false
+
+mysql:
+  enabled: true
+  primary:
+    resources:
+      requests: { memory: "256Mi", cpu: "100m" }
+      limits:   { memory: "512Mi", cpu: "300m" }

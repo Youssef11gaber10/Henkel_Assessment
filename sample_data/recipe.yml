@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Sample DataHub Ingestion Recipe
+# Ingests metadata from a local JSON file into DataHub.
+# Some datasets deliberately have NO owners — so our script can tag them.
+#
+# Run with:
+#   datahub ingest -c recipe.yml
+# ─────────────────────────────────────────────────────────────────────────────
+
+source:
+  type: file
+  config:
+    path: ./sample_metadata.json
+
+sink:
+  type: datahub-rest
+  config:
+    server: "http://localhost:8080"
+    token: "eyJhbGciOiJIUzI1NiJ9.eyJhY3RvclR5cGUiOiJVU0VSIiwiYWN0b3JJZCI6ImRhdGFodWIiLCJ0eXBlIjoiUEVSU09OQUwiLCJ2ZXJzaW9uIjoiMiIsImp0aSI6Ijk2MTA4MGNkLTI5OTktNDFlNy05YjhhLTgwOTMzMjg2NjY0OCIsInN1YiI6ImRhdGFodWIiLCJleHAiOjE3ODQzNjUyMjEsImlzcyI6ImRhdGFodWItbWV0YWRhdGEtc2VydmljZSJ9.oY13bSGm7X11B08mSe23-WDmI5UDWmT7h2Fpy-J7YbQ"   # uncomment if auth is enabled

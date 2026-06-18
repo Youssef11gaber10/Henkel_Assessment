@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tag-ownerless-cronjob
+  namespace: datahub
+
+spec:
+  schedule: "* * * * *" # run each 2 minutes
+
+  concurrencyPolicy: Forbid # only one job can run at a time
+  successfulJobsHistoryLimit: 4 # keep 3 successful jobs 
+  failedJobsHistoryLimit: 4 # keep 3 failed jobs
+
+  startingDeadlineSeconds: 60 # if the cluster was donw and cronjob its time passed and he get back alive within 60 seconds from cronjob , it will run immediately
+  # if was down and getback after 60s of cronjob it will not run
+
+  jobTemplate:
+    spec:
+      backoffLimit: 3 # try 3 times before giving up and considering the job failed
+      ttlSecondsAfterFinished: 60 # remove completed job after 60 seconds so they don't gathered when i do kubectl get cronjobs
+      template:
+        spec:
+          containers:
+          - name: cronjob-container
+            image: youssef11gaber10/cronjob-henkel:latest
+            imagePullPolicy: IfNotPresent
+            envFrom:
+              - configMapRef:
+                  name: cronjob-cm
+              - secretRef:
+                  name: cronjob-secret
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "50m"
+              limits:
+                memory: "128Mi"
+                cpu: "200m"
+
+            # this related to security of container, you can put at level of pod 
+            # another ensure that this container will not run as root 
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1000
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+        
+          restartPolicy: OnFailure

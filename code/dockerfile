@@ -1,0 +1,27 @@
+FROM python:3.11-slim AS builder 
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN python -m venv /opt/my-venv && \
+    . /opt/my-venv/bin/activate && \
+    pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.11-slim 
+
+WORKDIR /app
+
+COPY --from=builder /opt/my-venv /opt/my-venv
+
+COPY . .
+
+RUN useradd -u 1000 --no-create-home --shell /bin/false appuser 
+RUN chown appuser:appuser /app/script.py
+
+USER appuser
+
+ENV PATH="/opt/my-venv/bin:$PATH"
+
+
+ENTRYPOINT [ "python" , "script.py" ]

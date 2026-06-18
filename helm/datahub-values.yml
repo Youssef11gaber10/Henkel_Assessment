@@ -1,0 +1,44 @@
+datahub-gms:
+  replicas: 1
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+datahub-frontend:
+  replicas: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    hosts:
+      - host: datahub.local
+        paths:
+          - /
+    pathType: Prefix
+    
+graphServiceImpl: elasticsearch
+
+global:
+  elasticsearch:
+    host: "elasticsearch-master"
+    port: "9200"
+    implementation: "elasticsearch"
+
+
+
+acryl-datahub-actions:
+  enabled: false
